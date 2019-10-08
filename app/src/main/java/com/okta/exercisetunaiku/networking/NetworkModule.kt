@@ -12,9 +12,6 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.io.File
 import javax.inject.Singleton
 
-/**
- * Modified by okta on 8/27/18.
- */
 @Module
 class NetworkModule(internal var cacheFile: File) {
 

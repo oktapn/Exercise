@@ -6,4 +6,16 @@
     <string name="alamatktp">Alamat KTP</string>
     <string name="datadiri">Data Diri</string>
     <string name="review">Review Data</string>
+    <string name="register">Register</string>
+    <string name="next">Next</string>
+    <string name="nomor_ktp">Nomor KTP</string>
+    <string name="nama_lengkap">Nama Lengkap</string>
+    <string name="nomor_rekening">Nomor Rekening</string>
+    <string name="tanggal_lahir">Tanggal Lahir</string>
+    <string name="nomor_blok">Nomor Blok</string>
+    <string name="back_to_main_menu">Back to main menu</string>
+    <string name="data_diri">Data Diri</string>
+    <string name="tingkat_pendidikan">Tingkat pendidikan</string>
+    <string name="jenis_tempat_tinggal">Jenis Tempat Tinggal</string>
+    <string name="provinsi">Provinsi</string>
 </resources>
