@@ -2,19 +2,23 @@ package com.okta.exercisetunaiku.ui.reviewdata
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.okta.exercisetunaiku.R
 import com.okta.exercisetunaiku.model.datadiri.DataDiri
+import com.okta.exercisetunaiku.ui.alamatktp.AlamatKtpViewModel
 import com.okta.exercisetunaiku.ui.home.MainActivity
 import com.okta.exercisetunaiku.utils.Constant
-import kotlinx.android.synthetic.main.activity_data_diri.*
 import kotlinx.android.synthetic.main.activity_review_data.*
 
 
 class ReviewDataActivity : AppCompatActivity() {
 
-    var dataDiri: DataDiri? = null
+    private lateinit var viewModel: ReviewDataViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +27,10 @@ class ReviewDataActivity : AppCompatActivity() {
         actionBar!!.title = "Review Data"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        dataDiri = intent.getSerializableExtra(Constant.KEY_DATAKTP) as? DataDiri
+        val dataDiri: DataDiri = intent.getParcelableExtra(Constant.KEY_DATAKTP) as DataDiri
+        viewModel = ViewModelProviders.of(this).get(ReviewDataViewModel::class.java)
+        viewModel.data = dataDiri
+        Log.d("RData success", "my Message Prov ${viewModel.data}")
         setData()
         btnBack.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
@@ -33,15 +40,15 @@ class ReviewDataActivity : AppCompatActivity() {
     }
 
     private fun setData() {
-        rdNoKtp.text = dataDiri?.nomorktp
-        rdNamaLengkap.text = dataDiri?.namalengkap
-        rdNoRek.text = dataDiri?.nomorrekening
-        rdTingkatPendidikan.text = dataDiri?.tingkatpendidikan
-        rdTglLhr.text = dataDiri?.tanggallahir
-        rdAlamatKtp.text = dataDiri?.alamatktp
-        rdJnsTemptaTinggal.text = dataDiri?.jenistempattinggal
-        rdNoBlok.text = dataDiri?.nomorblok
-        rdProvinsi.text = dataDiri?.provinsi
+        rdNoKtp.text = viewModel.dataDiri.nomorktp
+        rdNamaLengkap.text = viewModel.dataDiri.namalengkap
+        rdNoRek.text = viewModel.dataDiri.nomorrekening
+        rdTingkatPendidikan.text = viewModel.dataDiri.tingkatpendidikan
+        rdTglLhr.text = viewModel.dataDiri.tanggallahir
+        rdAlamatKtp.text = viewModel.dataDiri.alamatktp
+        rdJnsTemptaTinggal.text = viewModel.dataDiri.jenistempattinggal
+        rdNoBlok.text = viewModel.dataDiri.nomorblok
+        rdProvinsi.text = viewModel.dataDiri.provinsi
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -1,13 +1,13 @@
-package com.okta.exercisetunaiku.model.provinsi
+package com.okta.exercisetunaiku.model.province
 
 
 import com.google.gson.annotations.SerializedName
 
-data class ProvinsiResponse(
+data class ProvinceResponse(
     @SerializedName("error")
     val error: Boolean,
     @SerializedName("message")
     val message: String,
     @SerializedName("semuaprovinsi")
-    val semuaprovinsi: ArrayList<Semuaprovinsi>
+    val semuaprovinsi: List<Semuaprovinsi>
 )

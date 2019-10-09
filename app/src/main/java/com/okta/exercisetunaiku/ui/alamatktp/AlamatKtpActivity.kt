@@ -3,6 +3,7 @@ package com.okta.exercisetunaiku.ui.alamatktp
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputFilter
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
@@ -17,15 +18,16 @@ import com.okta.exercisetunaiku.model.provinsi.ProvinsiResponse
 import com.okta.exercisetunaiku.model.tempattinggal.TempatTinggal
 import com.okta.exercisetunaiku.networking.Service
 import com.okta.exercisetunaiku.ui.reviewdata.ReviewDataActivity
+import com.okta.exercisetunaiku.utils.Constant.KEY_BUNDLE
 import com.okta.exercisetunaiku.utils.Constant.KEY_DATAKTP
 import kotlinx.android.synthetic.main.activity_alamat_ktp.*
 import kotlinx.android.synthetic.main.activity_data_diri.*
+import java.util.ArrayList
 import javax.inject.Inject
 
 
 class AlamatKtpActivity : BaseApp(), AlamatKtpView {
 
-    var dataDiri: DataDiri? = null
     private var viewModel: AlamatKtpViewModel? = null
     @Inject
     lateinit var service: Service
@@ -34,23 +36,23 @@ class AlamatKtpActivity : BaseApp(), AlamatKtpView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alamat_ktp)
         deps.inject(this)
-//        viewModel = AlamatKtpViewModel(service,this)
+        val actionBar = supportActionBar
+        actionBar!!.title = "Alamat KTP"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
         viewModel = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
                 return AlamatKtpViewModel(service, this@AlamatKtpActivity) as T
             }
         })[AlamatKtpViewModel::class.java]
-//        viewModel = ViewModelProviders.of(this).get(AlamatKtpViewModel(service,this)::class.java)
-        val actionBar = supportActionBar
-        actionBar!!.title = "Alamat KTP"
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
+        viewModel?.getProvinsi()
         setBtnNextAction()
         etNoBlokFilter()
         setSpinnerTingkatPendidikan()
-        viewModel?.getProvinsi()
-        dataDiri = intent.getSerializableExtra(KEY_DATAKTP) as? DataDiri
+        val datadiri: DataDiri? = intent.getParcelableExtra(KEY_DATAKTP) as? DataDiri
+        viewModel?.initialDatadiri(datadiri)
+        Log.d("RData success", "my Message Prov ${viewModel?.dataDiris}")
     }
 
     private fun setSpinnerTingkatPendidikan() {
@@ -104,12 +106,13 @@ class AlamatKtpActivity : BaseApp(), AlamatKtpView {
                     ).show()
                 }
                 else -> {
-                    dataDiri?.alamatktp = etAlamatKtp.text.toString()
-                    dataDiri?.jenistempattinggal = spnJnsTempatTinggal.selectedItem.toString()
-                    dataDiri?.nomorblok = etNoBlok.text.toString()
-                    dataDiri?.provinsi = spnProvinsi.selectedItem.toString()
+                    val alktp = etAlamatKtp.text.toString()
+                    val tmpttinggal = spnJnsTempatTinggal.selectedItem.toString()
+                    val nomorblok = etNoBlok.text.toString()
+                    val provinsi = spnProvinsi.selectedItem.toString()
+                    viewModel?.setDataDiri(alktp, tmpttinggal, nomorblok, provinsi)
                     val intent = Intent(this, ReviewDataActivity::class.java)
-                    intent.putExtra(KEY_DATAKTP, dataDiri)
+                    intent.putExtra(KEY_DATAKTP, viewModel?.dataDiris)
                     startActivity(intent)
                 }
             }
@@ -125,6 +128,7 @@ class AlamatKtpActivity : BaseApp(), AlamatKtpView {
     }
 
     override fun onFailure(appErrorMessage: String) {
+        Log.d("RProv error Act", "my Message Prov $appErrorMessage")
         Snackbar.make(
             root_layout_alamat_ktp,
             appErrorMessage,
@@ -133,9 +137,16 @@ class AlamatKtpActivity : BaseApp(), AlamatKtpView {
     }
 
     override fun getResponse(provinsiResponse: ProvinsiResponse) {
-        spnTingkatPendidikan.adapter = ArrayAdapter(
+        Log.d("RProv success Act", "my Message Prov $provinsiResponse")
+        val listProvinsi = ArrayList<String>()
+        listProvinsi.add("Pilih Provinsi...")
+        for (i in 0 until provinsiResponse.semuaprovinsi.size) {
+            val reponseprov = provinsiResponse.semuaprovinsi[i].nama
+            listProvinsi.add(reponseprov)
+        }
+        spnProvinsi.adapter = ArrayAdapter(
             this,
-            android.R.layout.simple_list_item_1, provinsiResponse.semuaprovinsi
+            android.R.layout.simple_list_item_1, listProvinsi
         )
     }
 

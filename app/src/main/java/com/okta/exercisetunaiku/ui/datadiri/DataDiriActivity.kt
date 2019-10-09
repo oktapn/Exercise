@@ -5,26 +5,24 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputFilter
+import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-import com.okta.exercisetunaiku.BaseApp
 import com.okta.exercisetunaiku.R
-import com.okta.exercisetunaiku.model.datadiri.DataDiri
 import com.okta.exercisetunaiku.model.pendidikan.Pendidikan
-import com.okta.exercisetunaiku.model.provinsi.ProvinsiResponse
 import com.okta.exercisetunaiku.ui.alamatktp.AlamatKtpActivity
 import com.okta.exercisetunaiku.utils.Constant.KEY_DATAKTP
 import kotlinx.android.synthetic.main.activity_data_diri.*
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.lifecycle.ViewModelProviders
 
 
 class DataDiriActivity : AppCompatActivity() {
 
-    var dataDiri: DataDiri? = null
+    lateinit var viewModel: DataDiriViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +31,7 @@ class DataDiriActivity : AppCompatActivity() {
         actionBar!!.title = "Data Diri"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+        viewModel = ViewModelProviders.of(this).get(DataDiriViewModel::class.java)
         btnNextDataDiri.setOnClickListener {
             setBtnNextDataDiriAction()
         }
@@ -145,13 +144,15 @@ class DataDiriActivity : AppCompatActivity() {
                     .show()
             }
             else -> {
-                dataDiri?.nomorktp = etNoKtp.text.toString()
-                dataDiri?.namalengkap = etNamaLengkap.text.toString()
-                dataDiri?.nomorrekening = etNoRek.text.toString()
-                dataDiri?.tingkatpendidikan = spnTingkatPendidikan.selectedItem.toString()
-                dataDiri?.tanggallahir = etTglLhr.text.toString()
+                val noktp: String = etNoKtp.text.toString()
+                val nama: String = etNamaLengkap.text.toString()
+                val norek: String = etNoRek.text.toString()
+                val pendidikan: String = spnTingkatPendidikan.selectedItem.toString()
+                val tgllahir: String = etTglLhr.text.toString()
+                viewModel.setDataDiri(noktp,nama,norek,pendidikan,tgllahir)
                 val intent = Intent(this, AlamatKtpActivity::class.java)
-                intent.putExtra(KEY_DATAKTP, dataDiri)
+                Log.d("RDatadiri success", "my Message Prov ${viewModel.dataDiri}")
+                intent.putExtra(KEY_DATAKTP, viewModel.dataDiri)
                 startActivity(intent)
             }
 

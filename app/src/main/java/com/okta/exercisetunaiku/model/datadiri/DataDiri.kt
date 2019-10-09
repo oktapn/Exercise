@@ -2,6 +2,7 @@ package com.okta.exercisetunaiku.model.datadiri
 
 import android.os.Parcel
 import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
 class DataDiri() : Parcelable {
     var nomorktp: String? = ""
