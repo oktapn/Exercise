@@ -1,28 +1,47 @@
 package com.okta.exercisetunaiku.ui.alamatktp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputFilter
 import android.view.MenuItem
+import android.view.View
 import android.widget.ArrayAdapter
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
+import com.okta.exercisetunaiku.BaseApp
 import com.okta.exercisetunaiku.R
 import com.okta.exercisetunaiku.model.datadiri.DataDiri
-import com.okta.exercisetunaiku.model.pendidikan.Pendidikan
+import com.okta.exercisetunaiku.model.provinsi.ProvinsiResponse
 import com.okta.exercisetunaiku.model.tempattinggal.TempatTinggal
+import com.okta.exercisetunaiku.networking.Service
 import com.okta.exercisetunaiku.ui.reviewdata.ReviewDataActivity
 import com.okta.exercisetunaiku.utils.Constant.KEY_DATAKTP
 import kotlinx.android.synthetic.main.activity_alamat_ktp.*
 import kotlinx.android.synthetic.main.activity_data_diri.*
+import javax.inject.Inject
 
-class AlamatKtpActivity : AppCompatActivity() {
+
+class AlamatKtpActivity : BaseApp(), AlamatKtpView {
 
     var dataDiri: DataDiri? = null
+    private var viewModel: AlamatKtpViewModel? = null
+    @Inject
+    lateinit var service: Service
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alamat_ktp)
+        deps.inject(this)
+//        viewModel = AlamatKtpViewModel(service,this)
+        viewModel = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return AlamatKtpViewModel(service, this@AlamatKtpActivity) as T
+            }
+        })[AlamatKtpViewModel::class.java]
+//        viewModel = ViewModelProviders.of(this).get(AlamatKtpViewModel(service,this)::class.java)
         val actionBar = supportActionBar
         actionBar!!.title = "Alamat KTP"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -30,6 +49,7 @@ class AlamatKtpActivity : AppCompatActivity() {
         setBtnNextAction()
         etNoBlokFilter()
         setSpinnerTingkatPendidikan()
+        viewModel?.getProvinsi()
         dataDiri = intent.getSerializableExtra(KEY_DATAKTP) as? DataDiri
     }
 
@@ -64,31 +84,59 @@ class AlamatKtpActivity : AppCompatActivity() {
                 }
                 spnJnsTempatTinggal.selectedItem.toString() == "Pilih Tempat Tinggal..." -> {
                     Snackbar.make(
-                        root_layout_data_diri,
+                        root_layout_alamat_ktp,
                         "Pilih Tempat Tinggal",
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
                 etNoBlok.text.isEmpty() -> {
                     Snackbar.make(
-                        root_layout_data_diri,
+                        root_layout_alamat_ktp,
                         "Isi Nomor Blok",
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
                 spnProvinsi.selectedItem.toString() == "Pilih Provinsi..." -> {
                     Snackbar.make(
-                        root_layout_data_diri,
+                        root_layout_alamat_ktp,
                         "Pilih Provinsi",
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
                 else -> {
+                    dataDiri?.alamatktp = etAlamatKtp.text.toString()
+                    dataDiri?.jenistempattinggal = spnJnsTempatTinggal.selectedItem.toString()
+                    dataDiri?.nomorblok = etNoBlok.text.toString()
+                    dataDiri?.provinsi = spnProvinsi.selectedItem.toString()
                     val intent = Intent(this, ReviewDataActivity::class.java)
+                    intent.putExtra(KEY_DATAKTP, dataDiri)
                     startActivity(intent)
                 }
             }
         }
+    }
+
+    override fun showWait() {
+        pBar.visibility = View.VISIBLE
+    }
+
+    override fun removeWait() {
+        pBar.visibility = View.GONE
+    }
+
+    override fun onFailure(appErrorMessage: String) {
+        Snackbar.make(
+            root_layout_alamat_ktp,
+            appErrorMessage,
+            Snackbar.LENGTH_LONG
+        ).show()
+    }
+
+    override fun getResponse(provinsiResponse: ProvinsiResponse) {
+        spnTingkatPendidikan.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1, provinsiResponse.semuaprovinsi
+        )
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

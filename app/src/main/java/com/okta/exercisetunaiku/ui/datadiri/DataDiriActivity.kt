@@ -6,12 +6,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.InputFilter
 import android.view.MenuItem
+import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.okta.exercisetunaiku.BaseApp
 import com.okta.exercisetunaiku.R
 import com.okta.exercisetunaiku.model.datadiri.DataDiri
 import com.okta.exercisetunaiku.model.pendidikan.Pendidikan
+import com.okta.exercisetunaiku.model.provinsi.ProvinsiResponse
 import com.okta.exercisetunaiku.ui.alamatktp.AlamatKtpActivity
 import com.okta.exercisetunaiku.utils.Constant.KEY_DATAKTP
 import kotlinx.android.synthetic.main.activity_data_diri.*

@@ -8,7 +8,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-@Component(modules =  arrayOf(NetworkModule::class))
+@Component(modules = [NetworkModule::class])
 interface Deps {
 
     fun inject(alamatKtpActivity: AlamatKtpActivity)

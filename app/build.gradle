@@ -16,7 +16,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "BASE_URL", "\"http://www.mocky.io/v2/\""
+        buildConfigField "String", "BASE_URL", "\"http://dev.farizdotid.com/api/daerahindonesia/\""
         buildConfigField "int", "LIMIT", "100"
         buildConfigField "int", "CACHETIME", "432000" // 5days
     }
@@ -65,6 +65,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    kapt "android.arch.lifecycle:compiler:2.1.0"
     kapt 'com.google.dagger:dagger-compiler:2.5'
     compileOnly 'javax.annotation:jsr250-api:1.0'
     compileOnly 'org.glassfish:javax.annotation:10.0-b28'

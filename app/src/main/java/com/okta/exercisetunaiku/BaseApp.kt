@@ -15,7 +15,7 @@ open class BaseApp : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val cacheFile = File(applicationContext?.cacheDir, "responses")
+        val cacheFile = File(cacheDir, "responses")
         deps = DaggerDeps.builder().networkModule(NetworkModule(cacheFile)).build()
     }
 }
